@@ -1,0 +1,59 @@
+mqtt:
+  #host: mqtt
+  host: 192.168.1.201
+  port: 1883
+  topic_prefix: frigate
+  client_id:  frigate
+  user: lts
+  password: ThanhSon1971
+rtmp:
+  # Optional: Enable the RTMP stream (default: True)
+  enabled: True
+birdseye:
+  enabled: True
+  width: 1920
+  height: 1080
+  quality: 1
+  mode: objects
+go2rtc:
+  streams:
+    front:
+    - rtsp://admin:123456@192.168.88.254:554/h264?channel=1&subtype=0
+    - "ffmpeg:front#video=h264"
+      #- rtsp://CAMERA_USER:CAMERA_PASS@CAMERA_IP:554/streaming/channels/101 # censored
+  #webrtc:
+  #  candidates:
+  #  - FRIGATE_HOST_LAN_IP:8555 # censored
+  #  - stun:8555
+objects:
+  track:
+    - person
+  filters:
+    person:
+      min_area: 5000
+      max_area: 100000
+      threshold: 0.7
+cameras:
+  test:
+    ffmpeg:
+      inputs:
+        #- path: /media/frigate/car-stopping.mp4
+        #- path: https://streams.videolan.org/ffmpeg/incoming/720p60.mp4
+        #rtsp://admin:123456@192.168.88.254:554/h264?channel=1&subtype=1
+        - path: rtsp://admin:123456@192.168.88.254:554/h264?channel=1&subtype=0
+          #input_args: -re -stream_lCoop -1 -fflags +genpts
+          input_args: preset-rtsp-restream
+          roles:
+            - detect
+            - rtmp
+    detect:
+      height: 1080
+      width: 1920
+      fps: 5
+    mqtt:
+      enabled: True
+      height: 1440
+      quality: 100
+    ui:
+      order: 0
+      dashboard: True
